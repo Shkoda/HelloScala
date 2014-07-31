@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="0.1-auth" author="shkoshka@gmail.com">
+        <createTable tableName="users">
+            <column name="user_id" type="int" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="username" type="varchar(255)">
+                <constraints unique="true" nullable="false"/>
+            </column>
+            <column name="password" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="enabled" type="boolean" defaultValueBoolean="true">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="authority">
+            <column name="authority_id" type="int" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="varchar(255)">
+                <constraints unique="true" nullable="false"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="user_authorities">
+            <column name="user_id" type="int">
+                <constraints foreignKeyName="fk_user_authorities_users" referencedTableName="users"
+                             referencedColumnNames="user_id"/>
+            </column>
+            <column name="authority_id" type="int">
+                <constraints foreignKeyName="fk_user_authorities_authority" referencedTableName="authority"
+                             referencedColumnNames="authority_id"/>
+            </column>
+        </createTable>
+        <addPrimaryKey columnNames="user_id, authority_id" constraintName="pk_user_authorities"
+                       tableName="user_authorities"/>
+
+        <insert tableName="authority">
+            <column name="authority_id">1</column>
+            <column name="name">ROLE_ADMIN</column>
+        </insert>
+        <insert tableName="authority">
+            <column name="authority_id">2</column>
+            <column name="name">ROLE_USER</column>
+        </insert>
+        <insert tableName="authority">
+            <column name="authority_id">3</column>
+            <column name="name">ROLE_POWER_USER</column>
+        </insert>
+
+        <createTable tableName="persistent_logins">
+            <column name="username" type="varchar(64)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="series" type="varchar(64)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="token" type="varchar(64)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_used" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="oauth_client_details">
+            <column name="client_id" type="varchar(256)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="resource_ids" type="varchar(256)"/>
+            <column name="client_secret" type="varchar(256)"/>
+            <column name="scope" type="varchar(256)"/>
+            <column name="authorized_grant_types" type="varchar(256)"/>
+            <column name="web_server_redirect_uri" type="varchar(256)"/>
+            <column name="authorities" type="varchar(256)"/>
+            <column name="access_token_validity" type="int"/>
+            <column name="refresh_token_validity" type="int"/>
+            <column name="additional_information" type="text"/>
+            <column name="autoapprove" type="varchar(256)"/>
+        </createTable>
+
+        <createTable tableName="oauth_access_token">
+            <column name="token_id" type="varchar(256)"/>
+            <column name="token" type="blob"/>
+            <column name="authentication_id" type="varchar(256)"/>
+            <column name="user_name" type="varchar(256)"/>
+            <column name="client_id" type="varchar(256)"/>
+            <column name="authentication" type="blob"/>
+            <column name="refresh_token" type="varchar(256)"/>
+        </createTable>
+
+        <createTable tableName="oauth_refresh_token">
+            <column name="token_id" type="varchar(256)"/>
+            <column name="token" type="blob"/>
+            <column name="authentication" type="blob"/>
+        </createTable>
+
+
+
+    </changeSet>
+
+    <changeSet id="0.1-auth-data" author="andy.sumskoy@gmail.com" context="test">
+        <insert tableName="users">
+            <column name="user_id">1</column>
+            <column name="username">admin</column>
+            <column name="password">dd28a28446b96db4c2207c3488a8f93fbb843af1eeb7db5d2044e64581145341c4f1f25de48be21b
+            </column>
+            <column name="enabled">true</column>
+        </insert>
+        <insert tableName="user_authorities">
+            <column name="user_id">1</column>
+            <column name="authority_id">1</column>
+        </insert>
+        <insert tableName="user_authorities">
+            <column name="user_id">1</column>
+            <column name="authority_id">2</column>
+        </insert>
+        <insert tableName="user_authorities">
+            <column name="user_id">1</column>
+            <column name="authority_id">3</column>
+        </insert>
+
+        <insert tableName="oauth_client_details">
+            <column name="client_id">simple-client</column>
+            <column name="client_secret">simple-client-secret-key</column>
+            <column name="authorized_grant_types">password</column>
+        </insert>
+    </changeSet>
+
+</databaseChangeLog>
