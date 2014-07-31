@@ -1,0 +1,4 @@
+HelloScala
+==========
+
+Scala experienece, hm...
